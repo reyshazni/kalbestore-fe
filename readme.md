@@ -4,7 +4,7 @@ Kalbestore-fe is a frontend service repository for the Kalbestore application, b
 
 ## Installation
 
-To run this application, make sure you start backend service and you have dotnet core installed on your computer and no running app on port 80. Then, follow these steps:
+To run this application, ensure that you have started the backend service, have installed .NET Core on your computer, and do not have any running applications on port 80. Then, follow these steps:
 
 
 1. Clone this repository.
