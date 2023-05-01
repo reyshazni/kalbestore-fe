@@ -15,30 +15,39 @@ namespace kalbestore_fe.Utils
 
         public static async Task<List<Produk>> GetProduk()
         {
-            string url = $"{baseurl}/produk/";
-            var response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            var responseBodyString = await response.Content.ReadAsStringAsync();
-
-            var jsonDocument = JsonDocument.Parse(responseBodyString);
-            var root = jsonDocument.RootElement;
-
-            var produkList = new List<Produk>();
-            foreach (var produkJson in root.GetProperty("data").EnumerateArray())
+            try
             {
-                var produk = new Produk
-                {
-                    ProductID = produkJson.GetProperty("productID").GetInt32(),
-                    ProductCode = produkJson.GetProperty("productCode").GetString(),
-                    ProductName = produkJson.GetProperty("productName").GetString(),
-                    Qty = produkJson.GetProperty("qty").GetInt32(),
-                    Price = produkJson.GetProperty("price").GetDecimal(),
-                    Inserted = produkJson.GetProperty("inserted").GetDateTime()
-                };
-                produkList.Add(produk);
-            }
+                string url = $"{baseurl}/produk/";
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var responseBodyString = await response.Content.ReadAsStringAsync();
 
-            return produkList;
+                var jsonDocument = JsonDocument.Parse(responseBodyString);
+                var root = jsonDocument.RootElement;
+
+                var produkList = new List<Produk>();
+                foreach (var produkJson in root.GetProperty("data").EnumerateArray())
+                {
+                    var produk = new Produk
+                    {
+                        ProductID = produkJson.GetProperty("productID").GetInt32(),
+                        ProductCode = produkJson.GetProperty("productCode").GetString(),
+                        ProductName = produkJson.GetProperty("productName").GetString(),
+                        Qty = produkJson.GetProperty("qty").GetInt32(),
+                        Price = produkJson.GetProperty("price").GetDecimal(),
+                        Inserted = produkJson.GetProperty("inserted").GetDateTime()
+                    };
+                    produkList.Add(produk);
+                }
+
+                return produkList;
+            } catch (HttpRequestException ex)
+            {
+                // Handle the error by logging it or returning a default value
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine("Please restart both backend and frontend service!");
+                return new List<Produk>();
+            }
         }
 
         public static async Task<List<Produk>> GetProdukByName(string productName)

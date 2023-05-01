@@ -11,6 +11,12 @@
 @{
     // Mengambil data dari API
     var produkList = APIHandler.GetProduk().Result;
+    if (produkList.Count == 0)
+    {
+    <div class="alert alert-danger" role="alert">
+        Produk tidak ditemukan! Silahkan hubungi Customer Service!
+    </div>
+    }
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -81,5 +87,4 @@
 
     function hideModalTwo() {
         $('#searchModal').modal('hide');
-    }
-</script>
+    }</script>
