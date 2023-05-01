@@ -1,0 +1,95 @@
+﻿@using kalbestore_fe.Utils;
+@using kalbestore_fe.Models;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Order";
+    var IsPost = HttpContextAccessor.HttpContext.Request.Method == "POST";
+}
+
+<h1>Order</h1>
+
+@{
+    // Get product details from the model
+    var productDetail = Model;
+}
+
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@productDetail.ProductName</h5>
+                <p class="card-text">Product Code: @productDetail.ProductCode</p>
+                <p class="card-text">Quantity: @productDetail.Qty</p>
+                <p class="card-text">Price: Rp @productDetail.Price.ToString("N0", new System.Globalization.CultureInfo("id-ID"))</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Add order form*@
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Order Form</h5>
+                <form method="post">
+                    <div class="form-group mt-2">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="@productDetail.Qty" required>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label for="name">Full Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3 mb-3">Order Now</button>
+                    @{
+                        if (IsPost)
+                        {
+                            // get form data
+                            var quantity = int.Parse(HttpContextAccessor.HttpContext.Request.Form["quantity"]);
+                            var name = HttpContextAccessor.HttpContext.Request.Form["name"];
+
+                            try
+                            {
+                                var customerId = APIHandler.GetCustomerIDByName(name).Result;
+                                // call CreateOrder method
+                                var result = await APIHandler.CreateOrderRegistered(customerId, productDetail.ProductID, quantity);
+                                if (result != null)
+                                {
+                                    // order created successfully
+                                    <div class="alert alert-success" role="alert">
+                                        <h2>Order created successfully!</h2>
+                                        <p>Order ID: @result.SalesOrderID</p>
+                                        <p>Customer Name: @result.CustomerName</p>
+                                        <p>Product Name: @result.ProdukName</p>
+                                        <p>Shipping Address: @result.AlamatPengiriman</p>
+                                        <p>Quantity: @result.Qty</p>
+                                        <p>Total Price: @result.TotalHarga</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    // error creating order
+                                    <div class="alert alert-danger" role="alert">
+                                        <h2>Gagal Membuat Order!</h2>
+                                    </div>
+                                }
+                            }
+                            catch
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    <h2>Nama Tidak Ditemukan!</h2>
+                                    <button type="button" class="btn btn-warning" onclick="@("window.location.href='" + @Url.Action("UnregisteredOrder", "Home", new { id = productDetail.ProductID }) + "'");">Order Sebagai Customer Baru</button>
+                                </div>
+                            }
+                        }
+                    }
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

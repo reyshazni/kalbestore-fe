@@ -1,0 +1,85 @@
+﻿@using kalbestore_fe.Utils;
+@using kalbestore_fe.Models;
+@using System.Collections.Generic;
+@inject IHttpContextAccessor HttpContextAccessor;
+
+@{
+    ViewData["Title"] = "Produk";
+    var IsPost = HttpContextAccessor.HttpContext.Request.Method == "POST";
+}
+
+@{
+    // Mengambil data dari API
+    var produkList = APIHandler.GetProduk().Result;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+
+<div class="row">
+    @foreach (var produk in produkList)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@produk.ProductName</h5>
+                    <p class="card-text">Rp @produk.Price.ToString("N0", new System.Globalization.CultureInfo("id-ID"))</p>
+                    <p class="card-text">Stok: @produk.Qty.ToString("N0")</p>
+
+                    <!-- Button trigger modal -->
+                    <button type="button" class="button btn-primary" data-bs-toggle="modal" data-bs-target="#beliModal-@produk.ProductID">
+                        Beli
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="beliModal-@produk.ProductID" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="beliModal-@produk.ProductID-Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <form id="beliForm" method="post">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="beliModal-@produk.ProductID-Label">Apakah Anda sudah pernah membeli produk di Kalbe Store Online?</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="d-flex justify-content-center gap-3">
+                                            <button type="button" class="btn btn-light" onclick="@("window.location.href='" + @Url.Action("UnregisteredOrder", "Home", new { id = produk.ProductID }) + "'");">Belum</button>
+                                            <button type="button" class="btn btn-primary" onclick="@("window.location.href='" + @Url.Action("RegisteredOrder", "Home", new { id = produk.ProductID }) + "'");">Sudah</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal 2: Memasukkan Nama Pengguna -->
+                    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="searchModalLabel">Masukkan Nama Anda</h5>
+                                    <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder="Nama Anda" aria-label="Cari Nama Anda" aria-describedby="basic-addon2" for="name" id="name" name="name">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="hideModalTwo()" data-bs-toggle="modal" data-bs-target="#resultModal">Search</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>function hideModalOne(produkID) {
+        $('#beliModal-' + produkID).modal('hide');
+    }
+
+    function hideModalTwo() {
+        $('#searchModal').modal('hide');
+    }
+</script>

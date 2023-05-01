@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Kalbe Store";
+}
+
+<div class="d-flex flex-column">
+    <div class ="rounded-100 .p-3" style="background-color: #87BD40; border-radius:24px; margin-bottom:300px">
+        <div class="d-flex flex-row justify-content-around" style="flex-shrink: 1">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <h2 style="font-weight:800; font-size:40px; margin-bottom:20px">Selamat Datang di Kalbe Store!</h2>
+                <div style="font-size: 16px">
+                    <p style="line-height:1px">Temukan obat-obatan yang Anda butuhkan dengan mudah di Kalbe Store Website!</p>
+                    <p>Beli sekarang dan nikmati pengiriman cepat dan aman!</p>
+                    <input class="button" type="button" onclick="@("window.location.href='" + @Url.Action("Produk", "Home") + "'");" value="Cari Produk" />
+                </div>
+            </div>
+            <div class="d-flex justify-content-center" style="padding-top: 20px">
+                <img src="~/assets/pharmacist.png" width="70%" />
+            </div>
+        </div>
+    </div>
+</div>

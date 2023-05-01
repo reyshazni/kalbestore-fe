@@ -1,0 +1,29 @@
+﻿@using kalbestore_fe.Utils;
+@using kalbestore_be.Models;
+@using System.Collections.Generic;
+
+@{
+    ViewData["Title"] = "Order Produk";
+}
+
+@{
+    // Get selected product ID from query string
+    var productId = Request.Query["id"];
+
+    // Get product details from API
+    var productDetail = APIHandler.GetProdukById(productId).Result;
+}
+
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@productDetail.ProductName</h5>
+                <p class="card-text">Product Code: @productDetail.ProductCode</p>
+                <p class="card-text">Product ID: @productDetail.ProductID</p>
+                <p class="card-text">Quantity: @productDetail.Qty</p>
+                <p class="card-text">Price: Rp @productDetail.Price.ToString("N0", new System.Globalization.CultureInfo("id-ID"))</p>
+            </div>
+        </div>
+    </div>
+</div>
